@@ -1,13 +1,19 @@
+from game import Game
+
 class Agent:
     def __init__(self, state):
-        self.state = state
+        self.environment = Game(state)
         self.goal = [0,1,2,3,4,5,6,7,8]
         self.seq = None
 
     def search_solution(self, state):
         if state == self.goal:
             return 'Found'
-        
+    
+    def do_action(self):
+        self.environment.set_state(self.move_void_square_up(self.environment.get_state()))
+        self.print_state(self.environment.get_state())
+
 
     def can_move_up(self, state):
         void_index = state.index(0)
