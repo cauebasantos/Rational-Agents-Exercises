@@ -1,64 +1,65 @@
 from game import Game
-
+from node import Node
+from collections import deque
 class Agent:
     def __init__(self, state):
         self.environment = Game(state)
-        self.goal = [0,1,2,3,4,5,6,7,8]
-        self.seq = None
+        self.goal = [1,2,3,8,0,4,7,6,5]
+        self.seq = deque()
+        self.possible_actions = ['UP', 'DOWN', 'LEFT', 'RIGHT']
 
-    def search_solution(self, state):
-        if state == self.goal:
-            return 'Found'
+    def search_solution(self):
+        state = self.environment.get_state()
+        root = Node(state, 'ROOT')
+        frontier = deque(root)
+        while frontier:
+            node = frontier.popleft()
+            if state == self.goal:
+                return 'Found'
+            self.apply_operators(node, frontier)
+
+            
     
     def do_action(self):
-        self.environment.set_state(self.move_void_square_up(self.environment.get_state()))
-        self.print_state(self.environment.get_state())
+        if self.seq == []:
+            self.search_solution()
+        else:
+            self.environment.set_state(self.seq.popleft())
 
-
-    def can_move_up(self, state):
+    def can_move(self, state, direction):
         void_index = state.index(0)
-        return void_index >= 3
+        if direction == 'UP':
+            return void_index >= 3 
+        elif direction == 'DOWN':
+            return void_index <= 5 
+        elif direction == 'LEFT':
+            return void_index%3 != 0 
+        elif direction == 'RIGHT':
+            return (void_index+1)%3 != 0 
 
-    def can_move_down(self, state):
-        void_index = state.index(0)
-        return void_index <= 5
-
-    def can_move_left(self, state):
-        void_index = state.index(0)
-        return void_index%3 != 0
-
-    def can_move_right(self, state):
-        void_index = state.index(0)
-        return (void_index+1)%3 != 0
-
-    def move_void_square_up(self, state):
+    def move_void_square(self, state, direction):
         state = state.copy()
         void_index = state.index(0)
-        if self.can_move_up(state):
-            state[void_index], state[void_index-3] = state[void_index-3], state[void_index]
+        if self.can_move(state, direction):
+            if direction == 'UP':
+                state[void_index], state[void_index-3] = state[void_index-3], state[void_index]
+            elif direction == 'DOWN':
+                state[void_index], state[void_index+3] = state[void_index+3], state[void_index]
+            elif direction == 'LEFT':
+                state[void_index], state[void_index-1] = state[void_index-1], state[void_index]
+            elif direction == 'RIGHT':
+                state[void_index], state[void_index+1] = state[void_index+1], state[void_index]
         return state
 
-    def move_void_square_down(self, state):
-        state = state.copy()
-        void_index = state.index(0)
-        if self.can_move_down(state):
-            state[void_index], state[void_index+3] = state[void_index+3], state[void_index]
-        return state
-
-    def move_void_square_left(self, state):
-        state = state.copy()
-        void_index = state.index(0)
-        if self.can_move_left(state):
-            state[void_index], state[void_index-1] = state[void_index-1], state[void_index]
-        return state
-
-    def move_void_square_right(self, state):
-        state = state.copy()
-        void_index = state.index(0)
-        if self.can_move_right(state):
-            state[void_index], state[void_index+1] = state[void_index+1], state[void_index]
-        return state
-
+    def apply_operators(self, node, queue):
+        for action in self.possible_actions:
+            if self.can_move(node.state, action):
+                node_parent = node
+                node_content = self.move_void_square(node.state, action)
+                node_path_cost = 1
+                node_action = action
+                queue += Node(node_content, node_action, node_parent, node_path_cost) 
+   
     def print_state(self, state):
         for i in range(3):
             print(f"{state[i*3]} {state[i*3 + 1]} {state[i*3 + 2]}")

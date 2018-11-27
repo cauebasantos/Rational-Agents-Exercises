@@ -1,11 +1,11 @@
 class Node:
-    def __init__(self, content, children=[], parent=None):
+    def __init__(self, content, action, parent=None, path_cost=1):
         self.content = content
-        self.children = children
+        self.action = action
         self.parent = parent
+        self.path_cost = path_cost
 
-    def add_parent(self, parent):
-        self.parent = parent
 
-    def add_children(self, child):
-        self.children.append(child)
+
+
+    
