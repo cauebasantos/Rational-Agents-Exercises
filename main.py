@@ -6,6 +6,6 @@ print('Estado atual:')
 agent.print_state(initial_state)
 agent.do_action()
 print('Resolução:')
-while agent.seq:
+while agent.solve_stack:
     agent.do_action()
 print('End')
