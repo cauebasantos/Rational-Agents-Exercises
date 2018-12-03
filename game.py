@@ -1,3 +1,5 @@
+from problem import Problem
+
 class Game:
     def __init__(self, state):
         self.state = state
@@ -17,18 +19,5 @@ class Game:
                 return (void_index+1)%3 != 0 
 
     def move_void_square(self, direction:str):
-        void_index = self.state.index(0)
-        if self.can_move(direction):
-            if direction == 'UP':
-                self.state[void_index], self.state[void_index-3] = \
-                self.state[void_index-3], self.state[void_index]
-            elif direction == 'DOWN':
-                self.state[void_index], self.state[void_index+3] = \
-                self.state[void_index+3], self.state[void_index]
-            elif direction == 'LEFT':
-                self.state[void_index], self.state[void_index-1] = \
-                self.state[void_index-1], self.state[void_index]
-            elif direction == 'RIGHT':
-                self.state[void_index], self.state[void_index+1] = \
-                self.state[void_index+1], self.state[void_index]
+        self.state = Problem.move_void_square(self.state, direction)
 
