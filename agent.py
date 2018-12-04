@@ -37,7 +37,7 @@ class Agent:
             self.print_state(self.environment.get_state())
         else:
             # search for a solution
-            self.solve_stack = search_solution_dfs(state, problem, threshold=10, interactive=True)
+            self.solve_stack = search_solution_dfs(state, problem, threshold=2, interactive=True)
             #self.solve_stack = search_solution_bfs(state, problem)
    
     def print_state(self, state:list):

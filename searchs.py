@@ -49,7 +49,8 @@ def search_solution_dfs(state:list, problem:Problem, threshold=1000, interactive
 
     while frontier:  # while frontier is not empty            
         node = frontier.pop(-1)  # pop the last node on the frontier
-        
+        print(node)
+
         # if this node is the goal state
         if node.content == problem.define_goal(state):
             # append all the nodes parents while it's not the root node
@@ -65,17 +66,21 @@ def search_solution_dfs(state:list, problem:Problem, threshold=1000, interactive
             continue
 
         # if we've crossed the threshold
-        elif node.depth > threshold and len(frontier) == 0 and interactive == False:
+        elif node.depth >= threshold and len(frontier) == 0 and \
+        interactive == False:
             print(f'No answer was found on a node of depth less than \
             {threshold}')
             return []
-        elif node.depth > threshold and len(frontier) == 0 and interactive == True:
-            frontier = [root] 
-            threshold += 10
-            history = []
-            print(f'No answer was found on a node of depth less than \
-            {threshold}, We are gonna keep looking')
 
+        # if we've crossed the threshold but we are doing a interactive search
+        elif node.depth >= threshold and len(frontier) == 0 and \
+        interactive == True:
+            print(f'No answer was found on a node of depth less than '
+            f'{threshold}, We are gonna keep looking')
+            frontier = [root] 
+            threshold += 2
+            history.clear()
+            continue
 
         # if the state is not the goal state
         if node.content not in history:
