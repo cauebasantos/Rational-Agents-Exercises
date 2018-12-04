@@ -4,8 +4,10 @@
 
 from game import Game
 from node import Node
-from node import lowest_cost
 from problem import Problem
+from searchs import search_solution_bfs
+from searchs import search_solution_dfs
+
 class Agent:
     def __init__(self, state:list):
         # holds the environment the agent is going to manipulate
@@ -15,102 +17,14 @@ class Agent:
         self.solve_stack = [] 
        
 
-    def search_solution_bfs(self, problem:Problem) -> bool:
-        """ Search the sequence of actions that leads to the goal state and puts
-        it on self.solve_stack variable 
-        """
-
-        # get the current state of the environment
-        state = self.environment.get_state()  
-        # create the root node with the current state
-        root = Node(state, 'None', None)  
-        frontier = [root]  # create the frontier queue and append the root to it
-
-        while frontier:  # while frontier is not empty
-            node = frontier.pop(0)  # pop the first node on the frontier
-            
-            # if this node is the goal state
-            if node.content == problem.define_goal(state):
-                # append all the nodes parents while it's not the root node
-                self.solve_stack.append(node)  
-                while node.parent != None and node.parent.parent != None:  
-                    node = node.parent
-                    self.solve_stack.append(node)
-                # since we found a solution
-                return True
-
-            # if the state is not the goal state
-            problem.apply_operators(node, frontier)
-
-        # if we don't found any soluction
-        return False
-
-    def search_solution_dfs(self, problem:Problem) -> bool:
-        """ Search the sequence of actions that leads to the goal state and puts
-        it on self.solve_stack variable 
-        """
-
-        # get the current state of the environment
-        state = self.environment.get_state()  
-        # create the root node with the current state
-        root = Node(state, 'None', None)  
-        frontier = [root]  # create the frontier stack and append the root to it
-
-        while frontier:  # while frontier is not empty
-            node = frontier.pop(-1)  # pop the last node on the frontier
-            
-            # if this node is the goal state
-            if node.content == problem.define_goal(state):
-                # append all the nodes parents while it's not the root node
-                self.solve_stack.append(node)  
-                while node.parent != None and node.parent.parent != None:  
-                    node = node.parent
-                    self.solve_stack.append(node)
-                # since we found a solution
-                return True
-
-            # if the state is not the goal state
-            problem.apply_operators(node, frontier)
-
-        # if we don't found any soluction
-        return False        
     
-    def search_solution_uc(self, problem:Problem) -> bool:
-        """ Search the sequence of actions that leads to the goal state and puts
-        it on self.solve_stack variable 
-        """
-
-        # get the current state of the environment
-        state = self.environment.get_state()  
-        # create the root node with the current state
-        root = Node(state, 'None', None)  
-        frontier = [root]  # create the frontier stack and append the root to it
-
-        while frontier:  # while frontier is not empty
-            index = lowest_cost(frontier)
-            node = frontier.pop(index)  # pop the cheaper node on the frontier
-            
-            # if this node is the goal state
-            if node.content == problem.define_goal(state):
-                print('Found')
-                # append all the nodes parents while it's not the root node
-                self.solve_stack.append(node)  
-                while node.parent != None and node.parent.parent != None:  
-                    node = node.parent
-                    self.solve_stack.append(node)
-                # since we found a solution
-                return True
-
-            # if the state is not the goal state
-            problem.apply_operators(node, frontier)
-
-        # if we don't found any soluction
-        return False       
-
     def do_action(self, problem:Problem):
         """ Performs the agent action, it might be search for a solve sequence 
         or execute some state
         """
+
+        state = self.environment.get_state()
+
         # if we already have a solution
         if self.solve_stack:
             # pop the next step 
@@ -123,7 +37,8 @@ class Agent:
             self.print_state(self.environment.get_state())
         else:
             # search for a solution
-            self.search_solution_bfs(problem)
+            self.solve_stack = search_solution_dfs(state, problem, threshold=10, interactive=True)
+            #self.solve_stack = search_solution_bfs(state, problem)
    
     def print_state(self, state:list):
         for i in range(3):

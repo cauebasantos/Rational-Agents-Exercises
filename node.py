@@ -9,7 +9,8 @@ class Node:
 
 
     def __repr__(self):
-        return f'<Node Object> state: {self.content}, action: {self.action}, path_cost: {self.path_cost}'
+        return f'<Node Object> state: {self.content}, action: {self.action}, \
+        path_cost: {self.path_cost}, depth: {self.depth}'
 
 def lowest_cost(arr:list):
     lowest = math.inf
