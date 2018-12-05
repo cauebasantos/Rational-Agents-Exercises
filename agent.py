@@ -7,7 +7,7 @@ from node import Node
 from problem import Problem
 from searchs import search_solution_bfs
 from searchs import search_solution_dfs
-
+from searchs import search_solution_uc
 class Agent:
     def __init__(self, state:list):
         # holds the environment the agent is going to manipulate
@@ -37,9 +37,10 @@ class Agent:
             self.print_state(self.environment.get_state())
         else:
             # search for a solution
-            self.solve_stack = search_solution_dfs(state, problem, threshold=2, interactive=True)
-            #self.solve_stack = search_solution_bfs(state, problem)
-   
+            self.solve_stack = search_solution_bfs(state, problem, keep_history=True)
+            #self.solve_stack = search_solution_uc(state, problem, keep_history=True)
+            #self.solve_stack = search_solution_dfs(state, problem, threshold=2, interactive=True)
+
     def print_state(self, state:list):
         for i in range(3):
             print(f"{state[i*3]} {state[i*3 + 1]} {state[i*3 + 2]}")

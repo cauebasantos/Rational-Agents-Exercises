@@ -1,4 +1,5 @@
 import math
+
 class Node:
     def __init__(self, content, action, parent, path_cost=0, depth=0):
         self.content = content
@@ -23,3 +24,9 @@ def lowest_cost(arr:list):
         aux_index += 1
     return index
     
+def insert_sorted(node:Node, arr:list):
+    pivot =  int(len(arr)/2)
+    right = arr[pivot]
+    left =  arr[pivot - 1]
+    if left.content <= node.content <= right.content:
+        arr.insert(right, node)

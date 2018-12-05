@@ -2,11 +2,12 @@ from node import Node
 from node import lowest_cost
 from problem import Problem
 
-def search_solution_bfs(state:list, problem:Problem) -> list:
+def search_solution_bfs(state:list, problem:Problem, keep_history=False) -> list:
     "" """ Search the sequence of actions that leads to the goal state and puts
     it on self.solve_stack variable 
     """
-
+    # keep up a history of most recent states viseted
+    history = [] 
     # create the root node with the current state
     root = Node(state, 'None', None)  
     frontier = [root]  # create the frontier queue and append the root to it
@@ -27,8 +28,16 @@ def search_solution_bfs(state:list, problem:Problem) -> list:
             # since we found a solution
             return solve_stack
 
-        # if the state is not the goal state
-        problem.apply_operators(node, frontier)
+        # if the state is not the goal state and we keep history
+        if keep_history:
+            # if the state is not in the history
+            if node.content not in history:
+                problem.apply_operators(node, frontier)
+                history.append(node.content)
+                if len(history) > 100:
+                    history.pop(0)
+        else:
+            problem.apply_operators(node, frontier)
 
     # if we don't found any soluction
     return []
@@ -49,7 +58,6 @@ def search_solution_dfs(state:list, problem:Problem, threshold=1000, interactive
 
     while frontier:  # while frontier is not empty            
         node = frontier.pop(-1)  # pop the last node on the frontier
-        print(node)
 
         # if this node is the goal state
         if node.content == problem.define_goal(state):
@@ -90,11 +98,13 @@ def search_solution_dfs(state:list, problem:Problem, threshold=1000, interactive
     # if we don't found any soluction
     return []        
 
-def search_solution_uc(state:list, problem:Problem) -> list:
+def search_solution_uc(state:list, problem:Problem, keep_history=False) -> list:
     """ Search the sequence of actions that leads to the goal state and puts
     it on self.solve_stack variable 
     """
 
+    # keep up a history of most recent states viseted
+    history = [] 
     # create the root node with the current state
     root = Node(state, 'None', None)  
     frontier = [root]  # create the frontier stack and append the root to it
@@ -104,10 +114,8 @@ def search_solution_uc(state:list, problem:Problem) -> list:
     while frontier:  # while frontier is not empty
         index = lowest_cost(frontier)
         node = frontier.pop(index)  # pop the cheaper node on the frontier
-        
         # if this node is the goal state
         if node.content == problem.define_goal(state):
-            print('Found')
             # append all the nodes parents while it's not the root node
             solve_stack.append(node)  
             while node.parent != None and node.parent.parent != None:  
@@ -116,8 +124,16 @@ def search_solution_uc(state:list, problem:Problem) -> list:
             # since we found a solution
             return solve_stack
 
-        # if the state is not the goal state
-        problem.apply_operators(node, frontier)
+        # if the state is not the goal state and we keep history
+        if keep_history:
+            # if the state is not in the history
+            if node.content not in history:
+                problem.apply_operators(node, frontier)
+                history.append(node.content)
+                if len(history) > 100:
+                    history.pop(0)
+        else:
+            problem.apply_operators(node, frontier)
 
     # if we don't found any soluction
     return []       
