@@ -60,34 +60,32 @@ def search_solution_dfs(state:list, problem:Problem, threshold=1000, interactive
                 solve_stack.append(node)
             # since we found a solution
             return solve_stack
-        
-        # if we've crossed the threshold on this node but there is other nodes
-        elif node.depth > threshold and frontier:
+
+        # if we've crossed the threshold and there is any node on the frontier
+        if node.depth >= threshold and frontier:
             continue
-
-        # if we've crossed the threshold
-        elif node.depth >= threshold and len(frontier) == 0 and \
-        interactive == False:
-            print(f'No answer was found on a node of depth less than \
-            {threshold}')
-            return []
-
-        # if we've crossed the threshold but we are doing a interactive search
-        elif node.depth >= threshold and len(frontier) == 0 and \
-        interactive == True:
-            print(f'No answer was found on a node of depth less than '
-            f'{threshold}, We are gonna keep looking')
-            frontier = [root] 
-            threshold += 2
-            history.clear()
-            continue
-
+            
         # if the state is not the goal state
         if node.content not in history:
             problem.apply_operators(node, frontier)
             history.append(node.content)
             if len(history) > 100:
                 history.pop(0)
+       
+        # if we are doing a interactive search
+        if interactive and not frontier:
+            print(f'No answer was found on a node of depth less than '
+            f'{threshold}, We are gonna keep looking')
+            frontier = [root] 
+            threshold += 2
+            history.clear()
+            continue
+        elif not interactive and not frontier:
+            print(f'No answer was found on a node of depth less than \
+            {threshold}')
+            return []
+
+        
 
     # if we don't found any soluction
     return []        
