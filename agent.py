@@ -8,6 +8,8 @@ from problem import Problem
 from searchs import search_solution_bfs
 from searchs import search_solution_dfs
 from searchs import search_solution_uc
+from searchs import search_solution_astar
+
 class Agent:
     def __init__(self, state:list):
         # holds the environment the agent is going to manipulate
@@ -37,9 +39,10 @@ class Agent:
             self.print_state(self.environment.get_state())
         else:
             # search for a solution
-            self.solve_stack = search_solution_bfs(state, problem, keep_history=True)
+            #self.solve_stack = search_solution_bfs(state, problem, keep_history=True, history_len=1000)
             #self.solve_stack = search_solution_uc(state, problem, keep_history=True)
             #self.solve_stack = search_solution_dfs(state, problem, threshold=2, interactive=True)
+            self.solve_stack = search_solution_astar(state, problem, keep_history=True, history_len=1023)
 
     def print_state(self, state:list):
         for i in range(3):

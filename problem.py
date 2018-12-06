@@ -1,4 +1,6 @@
 from node import Node
+from node import insert_sorted
+from node import insert_sorted_astar
 
 class Problem:
     def __init__(self):
@@ -7,7 +9,8 @@ class Problem:
 
     @staticmethod
     def define_goal(state:list) -> list:
-        return [1,2,3,8,0,4,7,6,5]
+        #return [1,2,3,8,0,4,7,6,5]
+        return [1,2,3,4,5,6,7,8,0]
 
     @staticmethod
     def can_move(state:list, direction:str) -> bool:
@@ -43,7 +46,8 @@ class Problem:
     
         return None
 
-    def apply_operators(self, node:Node, frontier:list):
+    def apply_operators(self, node:Node, frontier:list, searchUC=False, 
+        heuristic=False, cost_with_heuristic=False):
         for action in self.possible_actions:
             if Problem.can_move(node.content, action):
                 node_content = Problem.move_void_square(node.content, action)
@@ -52,8 +56,35 @@ class Problem:
                 node_action = action
                 node_depth = node.depth + 1
                 if node_content != None:
-                    frontier.append(Node(node_content, node_action, node_parent, 
-                    node_path_cost, node_depth)) 
+                    new_node = Node(node_content, node_action, node_parent, 
+                        node_path_cost, node_depth)
+                    
+                    if heuristic or cost_with_heuristic:
+                        self.apply_heuristic(new_node)
+
+                    if cost_with_heuristic:
+                        self.apply_cost_with_heuristic(new_node)
+                        insert_sorted_astar(new_node, frontier)
+                        return
+
+                    if searchUC:
+                        insert_sorted(new_node, frontier)
+                    else:
+                        frontier.append(new_node) 
+
+                   
 
 
+                
+    def apply_heuristic(self, node:Node):
+        score = 0
+        state = node.content
+        goal = self.define_goal(state)
+        for i in range(len(state)):
+            if state[i] == goal[i]:
+                score += 1
+        node.heuristic = score
+
+    def apply_cost_with_heuristic(self, node:Node):
+        node.cost_with_heuristic = node.path_cost + node.heuristic
 
